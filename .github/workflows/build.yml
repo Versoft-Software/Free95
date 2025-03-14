@@ -9,6 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: ilammy/setup-nasm@v1
     - name: make
       run: |
         cd free95
