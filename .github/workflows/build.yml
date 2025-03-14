@@ -13,4 +13,8 @@ jobs:
     - name: make
       run: |
         cd free95
-        make
+        make link
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Kernel
+        path: build/bin/
