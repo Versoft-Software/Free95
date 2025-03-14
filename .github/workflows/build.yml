@@ -9,7 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - run: sudo apt-get install nasm
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: nasm
+        execute_install_scripts: true
     - name: make
       run: |
         cd free95
@@ -17,4 +20,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: Kernel
-        path: build/bin/
+        path: free95/build/bin/
