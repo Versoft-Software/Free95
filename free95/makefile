@@ -27,7 +27,7 @@ COBJ    := $(patsubst $(SRC)/%.c,$(OBJ)/%.c.o,$(SOURCES))
 CFLAGS= -m32 -std=gnu99 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -Wno-error -Wno-implicit-function-declaration -Wno-int-conversion
 ASFLAGS=-felf32
 
-all: $(COBJ) $(ASMOBJ) link run
+all: $(COBJ) $(ASMOBJ) link 
 
 link:
 	mkdir -p $(BIN)

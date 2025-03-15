@@ -22,4 +22,4 @@ By NT Syscalls, Win32 API Implementation, etc.
 You can join this project by simply doing so, literally. Just create a pull request, unless you have discord, in which case you can DM dripkap_19416 to join and communicate with other developers of the project.
 
 # Running releases
-You can either compile the Operating System from source, (running ``` make ``` in src/) or downloading a binary from the Releases section.
+You can either compile the Operating System from source, (running ``` make ``` in free95/) or downloading a binary from the Releases section.
