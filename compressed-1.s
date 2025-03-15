@@ -29,11 +29,6 @@ foo1:
 .LFB0:
 	.loc 1 5 0
 	.cfi_startproc
-	subl	$12, %esp
-	.cfi_def_cfa_offset 16
-	.loc 1 7 0
-	addl	$12, %esp
-	.cfi_def_cfa_offset 4
 	.loc 1 6 0
 	jmp	bar
 	.cfi_endproc
@@ -41,25 +36,25 @@ foo1:
 	.size	foo1, .-foo1
 .Letext0:
 	.section	.debug_info
-	.long	0x46
+	.long	0x5e
 	.value	0x3
 	.long	.Ldebug_abbrev0
-	.byte	0x4
+	.byte	0x8
 	.uleb128 0x1
 	.long	.LASF2
 	.byte	0x1
 	.long	.LASF3
 	.long	.LASF4
-	.long	.Ltext0
-	.long	.Letext0
+	.quad	.Ltext0
+	.quad	.Letext0
 	.long	.Ldebug_line0
 	.uleb128 0x2
 	.byte	0x1
 	.long	.LASF0
 	.byte	0x1
 	.byte	0xa
-	.long	.LFB1
-	.long	.LFE1
+	.quad	.LFB1
+	.quad	.LFE1
 	.byte	0x1
 	.byte	0x9c
 	.uleb128 0x2
@@ -67,8 +62,8 @@ foo1:
 	.long	.LASF1
 	.byte	0x1
 	.byte	0x4
-	.long	.LFB0
-	.long	.LFE0
+	.quad	.LFB0
+	.quad	.LFE0
 	.byte	0x1
 	.byte	0x9c
 	.byte	0x0
@@ -116,24 +111,24 @@ foo1:
 	.long	0x20
 	.value	0x2
 	.long	.Ldebug_info0
-	.long	0x4a
-	.long	0x25
+	.long	0x62
+	.long	0x2d
 	.string	"foo2"
-	.long	0x37
+	.long	0x47
 	.string	"foo1"
 	.long	0x0
 	.section	.debug_aranges,"",@progbits
-	.long	0x1c
+	.long	0x2c
 	.value	0x2
 	.long	.Ldebug_info0
-	.byte	0x4
+	.byte	0x8
 	.byte	0x0
 	.value	0x0
 	.value	0x0
-	.long	.Ltext0
-	.long	.Letext0-.Ltext0
-	.long	0x0
-	.long	0x0
+	.quad	.Ltext0
+	.quad	.Letext0-.Ltext0
+	.quad	0x0
+	.quad	0x0
 	.section	.debug_str,"MS",@progbits,1
 .LASF2:
 	.string	"GNU C 4.4.4"
