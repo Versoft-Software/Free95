@@ -1,150 +1,183 @@
 ## Process this file with automake to generate Makefile.in
-##
-##   Copyright (C) 2012-2025 Free Software Foundation, Inc.
-##
-## This file is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 3 of the License, or
-## (at your option) any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with this program; see the file COPYING3.  If not see
-## <http://www.gnu.org/licenses/>.
-##
+#
+#   Copyright (C) 2012-2025 Free Software Foundation, Inc.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; see the file COPYING3.  If not see
+# <http://www.gnu.org/licenses/>.
+#
 
-DOCFILES = \
-	%D%/aoutx.texi \
-	%D%/archive.texi \
-	%D%/archures.texi \
-	%D%/bfdio.texi \
-	%D%/bfdt.texi \
-	%D%/bfdver.texi \
-	%D%/cache.texi \
-	%D%/coffcode.texi \
-	%D%/corefile.texi \
-	%D%/elfcode.texi \
-	%D%/elf.texi \
-	%D%/format.texi \
-	%D%/hash.texi \
-	%D%/libbfd.texi \
-	%D%/linker.texi \
-	%D%/mmo.texi \
-	%D%/opncls.texi \
-	%D%/reloc.texi \
-	%D%/section.texi \
-	%D%/syms.texi \
-	%D%/targets.texi
+# What version of the manual you want; "all" includes everything
+CONFIG=all
 
-# SRCDOC, SRCPROT, SRCIPROT only used to sidestep Sun Make bug in interaction
-# between VPATH and suffix rules.  If you use GNU Make, perhaps other Makes,
-# you don't need these three:
-SRCDOC = \
-	$(srcdir)/aoutx.h $(srcdir)/archive.c \
-	$(srcdir)/archures.c $(srcdir)/bfd.c \
-	$(srcdir)/cache.c $(srcdir)/coffcode.h \
-	$(srcdir)/corefile.c $(srcdir)/elf.c \
-	$(srcdir)/elfcode.h $(srcdir)/format.c \
-	$(srcdir)/libbfd.c $(srcdir)/opncls.c \
-	$(srcdir)/reloc.c $(srcdir)/section.c \
-	$(srcdir)/syms.c $(srcdir)/targets.c \
-	$(srcdir)/hash.c $(srcdir)/linker.c \
-	$(srcdir)/mmo.c
+# Options to extract the man page from as.texinfo
+MANCONF = -Dman
 
-SRCPROT = $(srcdir)/archive.c $(srcdir)/archures.c \
-	$(srcdir)/bfd.c $(srcdir)/coffcode.h $(srcdir)/corefile.c \
-	$(srcdir)/format.c $(srcdir)/libbfd.c \
-	$(srcdir)/opncls.c $(srcdir)/reloc.c \
-	$(srcdir)/section.c $(srcdir)/syms.c \
-	$(srcdir)/targets.c
+TEXI2POD = perl $(top_srcdir)/../etc/texi2pod.pl $(AM_MAKEINFOFLAGS)
 
-SRCIPROT = $(srcdir)/cache.c $(srcdir)/libbfd.c \
-	$(srcdir)/bfdio.c \
-	$(srcdir)/reloc.c $(srcdir)/cpu-h8300.c \
-	$(srcdir)/archures.c
+POD2MAN = pod2man --center="GNU Development Tools" \
+	 --release="binutils-$(VERSION)" --section=1
 
-TEXIDIR = $(srcdir)/../texinfo/fsf
+# List of man pages generated from binutils.texi
+man_MANS = \
+	%D%/addr2line.1 \
+	%D%/ar.1 \
+	%D%/dlltool.1 \
+	%D%/nm.1 \
+	%D%/objcopy.1 \
+	%D%/objdump.1 \
+	%D%/ranlib.1 \
+	%D%/readelf.1 \
+	%D%/size.1 \
+	%D%/strings.1 \
+	%D%/strip.1 \
+	%D%/elfedit.1 \
+	%D%/windres.1 \
+	%D%/windmc.1 \
+	%D%/$(DEMANGLER_NAME).1
 
-info_TEXINFOS = %D%/bfd.texi
-%C%_bfd_TEXINFOS = $(DOCFILES) %D%/bfdsumm.texi
+info_TEXINFOS = %D%/binutils.texi
+binutils_TEXI = $(srcdir)/%D%/binutils.texi
 
-AM_MAKEINFOFLAGS = --no-split -I "$(srcdir)/%D%" -P %D%
-TEXI2DVI = texi2dvi -I "$(srcdir)/%D%" -I %D%
+AM_MAKEINFOFLAGS = -I "$(srcdir)/%D%" -I "$(top_srcdir)/../libiberty" \
+		   -I "$(top_srcdir)/../bfd/doc" -I ../bfd/doc \
+		   --no-split
+TEXI2DVI = texi2dvi -I "$(srcdir)/%D%" -I "$(top_srcdir)/../libiberty" \
+		    -I "$(top_srcdir)/../bfd/doc" -I ../bfd/doc
 
-MKDOC = %D%/chew$(EXEEXT_FOR_BUILD)
+# Man page generation from texinfo
+%D%/addr2line.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Daddr2line < $(binutils_TEXI) > addr2line.pod
+	$(AM_V_at)-($(POD2MAN) addr2line.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f addr2line.pod
 
-$(MKDOC): %D%/chew.stamp ; @true
-%D%/chew.stamp: $(srcdir)/%D%/chew.c %D%/$(am__dirstamp)
-	$(AM_V_CCLD)$(CC_FOR_BUILD) -o %D%/chw$$$$$(EXEEXT_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
-	  $(WARN_CFLAGS_FOR_BUILD) $(CPPFLAGS_FOR_BUILD) $(LDFLAGS_FOR_BUILD) \
-	  -I. -I$(srcdir) -I%D% -I$(srcdir)/../include -I$(srcdir)/../intl -I../intl \
-	  $(srcdir)/%D%/chew.c && \
-	$(SHELL) $(srcdir)/../move-if-change \
-	  %D%/chw$$$$$(EXEEXT_FOR_BUILD) $(MKDOC) && \
-	touch $@
+%D%/ar.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dar < $(binutils_TEXI) > ar.pod
+	$(AM_V_at)-($(POD2MAN) ar.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f ar.pod
 
-# We can't replace these rules with an implicit rule, because
-# makes without VPATH support couldn't find the .h files in `..'.
+%D%/dlltool.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Ddlltool < $(binutils_TEXI) > dlltool.pod
+	$(AM_V_at)-($(POD2MAN) dlltool.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f dlltool.pod
 
-# We do not depend on chew directly so that we can distribute the info
-# files, and permit people to rebuild them, without requiring the makeinfo
-# program.  If somebody tries to rebuild info, but none of the .texi files
-# have changed, then nothing will be rebuilt.
+%D%/nm.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dnm < $(binutils_TEXI) > nm.pod
+	$(AM_V_at)-($(POD2MAN) nm.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f nm.pod
 
-REGEN_TEXI = \
-	( \
-	set -e; \
-	$(MKDOC) -f $(srcdir)/%D%/doc.str < $< > $@.tmp; \
-	texi=$@; \
-	texi=$${texi%.stamp}.texi; \
-	test -e $$texi || test ! -f $(srcdir)/$$texi || $(LN_S) $(abs_srcdir)/$$texi $$texi; \
-	$(SHELL) $(srcdir)/../move-if-change $@.tmp $$texi; \
-	touch $@; \
-	)
+%D%/objcopy.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dobjcopy < $(binutils_TEXI) > objcopy.pod
+	$(AM_V_at)-($(POD2MAN) objcopy.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f objcopy.pod
 
-.PRECIOUS: %D%/%.stamp
-%D%/%.texi: %D%/%.stamp ; @true
-%D%/%.stamp: $(srcdir)/%.c $(srcdir)/%D%/doc.str $(MKDOC) %D%/$(am__dirstamp)
-	$(AM_V_GEN)$(REGEN_TEXI)
-%D%/%.stamp: $(srcdir)/%.h $(srcdir)/%D%/doc.str $(MKDOC) %D%/$(am__dirstamp)
-	$(AM_V_GEN)$(REGEN_TEXI)
+%D%/objdump.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dobjdump < $(binutils_TEXI) > objdump.pod
+	$(AM_V_at)-($(POD2MAN) objdump.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f objdump.pod
 
-# Avoid the %.stamp generating a builddir/bfd.texi that overrides the
-# srcdir/ as well as regenerating doc/bfd.info for each make run.
-%D%/bfd.stamp: $(srcdir)/%D%/bfd.texi ; $(AM_V_at)touch $@
+%D%/ranlib.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dranlib < $(binutils_TEXI) > ranlib.pod
+	$(AM_V_at)-($(POD2MAN) ranlib.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f ranlib.pod
 
-# We use bfdt.texi, rather than bfd.texi, to avoid conflicting with
-# bfd.texi on an 8.3 filesystem.
-%D%/bfdt.stamp: $(srcdir)/bfd.c $(srcdir)/%D%/doc.str $(MKDOC) %D%/$(am__dirstamp)
-	$(AM_V_GEN)$(REGEN_TEXI)
+%D%/readelf.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dreadelf < $(binutils_TEXI) > readelf.pod
+	$(AM_V_at)-($(POD2MAN) readelf.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f readelf.pod
 
-%D%/bfdver.texi: $(srcdir)/Makefile.in
-	$(AM_V_GEN)\
-	$(MKDIR_P) $(@D); \
-	echo "@set VERSION $(VERSION)" > $@; \
-	if test -n "$(PKGVERSION)"; then \
-	  echo "@set VERSION_PACKAGE $(PKGVERSION)" >> $@; \
+%D%/size.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dsize < $(binutils_TEXI) > size.pod
+	$(AM_V_at)-($(POD2MAN) size.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f size.pod
+
+%D%/strings.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dstrings < $(binutils_TEXI) > strings.pod
+	$(AM_V_at)-($(POD2MAN) strings.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f strings.pod
+
+%D%/strip.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dstrip < $(binutils_TEXI) > strip.pod
+	$(AM_V_at)-($(POD2MAN) strip.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f strip.pod
+
+%D%/elfedit.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Delfedit < $(binutils_TEXI) > elfedit.pod
+	$(AM_V_at)-($(POD2MAN) elfedit.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f elfedit.pod
+
+%D%/windres.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dwindres < $(binutils_TEXI) > windres.pod
+	$(AM_V_at)-($(POD2MAN) windres.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f windres.pod
+
+%D%/windmc.1:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dwindmc < $(binutils_TEXI) > windmc.pod
+	$(AM_V_at)-($(POD2MAN) windmc.pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f windmc.pod
+
+%D%/cxxfilt.man:	$(binutils_TEXI) doc/$(am__dirstamp)
+	$(AM_V_GEN)touch $@
+	$(AM_V_at)-$(TEXI2POD) $(MANCONF) -Dcxxfilt < $(binutils_TEXI) > $(DEMANGLER_NAME).pod
+	$(AM_V_at)-($(POD2MAN) $(DEMANGLER_NAME).pod | sed -e '/^.if n .na/d' > $@.T$$$$ && \
+		mv -f $@.T$$$$ $@) || (rm -f $@.T$$$$ && exit 1)
+	$(AM_V_at)rm -f $(DEMANGLER_NAME).pod
+
+MAINTAINERCLEANFILES += $(man_MANS) %D%/binutils.info %D%/cxxfilt.man
+
+%D%/$(DEMANGLER_NAME).1: %D%/cxxfilt.man Makefile doc/$(am__dirstamp)
+	$(AM_V_GEN)if test -f %D%/cxxfilt.man; then \
+	  man=%D%/cxxfilt.man; \
+	else \
+	  man=$(srcdir)/%D%/cxxfilt.man; \
 	fi; \
-	echo "@set UPDATED `date '+%B %Y'`" >> $@; \
-	if test -n "$(REPORT_BUGS_TEXI)"; then \
-	  echo "@set BUGURL $(REPORT_BUGS_TEXI)" >> $@; \
-	fi
+	sed -e 's/cxxfilt/$(DEMANGLER_NAME)/' < $$man \
+		> %D%/$(DEMANGLER_NAME).1
 
-noinst_TEXINFOS = %D%/bfdint.texi
+html-local: %D%/binutils/index.html
+%D%/binutils/index.html: %D%/binutils.texi $(binutils_TEXINFOS)
+	$(AM_V_GEN)$(MAKEINFOHTML) $(AM_MAKEINFOHTMLFLAGS) $(MAKEINFOFLAGS) \
+	  --split=node -I$(srcdir) $(srcdir)/%D%/binutils.texi
 
-MOSTLYCLEANFILES += $(MKDOC) %D%/*.o %D%/*.stamp
+# Maintenance
 
-DISTCLEANFILES += %D%/bfd.?? %D%/bfd.??? texput.log
-
-MAINTAINERCLEANFILES += $(DOCFILES)
-
-html-local: %D%/bfd/index.html
-%D%/bfd/index.html: %D%/bfd.texi $(bfd_TEXINFOS) %D%/$(am__dirstamp)
-	$(AM_V_at)$(MAKEINFOHTML) $(AM_MAKEINFOHTMLFLAGS) $(MAKEINFOFLAGS) \
-	  --split=node -o %D%/bfd $(srcdir)/%D%/bfd.texi
-
-MAINTAINERCLEANFILES += %D%/bfd.info
+# We need it for the taz target in ../Makefile.in.
+info-local: $(MANS)
