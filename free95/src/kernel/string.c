@@ -1,113 +1,238 @@
+/*
+ * Free 95
+ *
+ * NAME:
+ *		string.c
+ *
+ * DESCRIPTION:
+ *		String operations.
+ *
+ * Author: Rainy101112
+ *
+ */
+
 #include "string.h"
+#include "pmm.h"
 #include <stdint.h>
 #include <stddef.h>
 
-void outb(uint16_t port, uint8_t value)
+inline int memcmp(const void *buffer1, const void *buffer2, size_t count)
 {
-    asm volatile ("outb %1, %0" : : "dN" (port), "a" (value));
+    const char *a = buffer1;
+    const char *b = buffer2;
+    while (count-- > 0)
+    {
+        if (*a != *b)
+            return *a > *b ? 1 : -1;
+        a++, b++;
+    }
+    return 0;
 }
 
-uint8_t inb(uint16_t port)
+inline void memcpy(uint8_t *dest, const uint8_t *src, uint32_t len)
 {
-    uint8_t ret;
-    asm volatile("inb %1, %0" : "=a" (ret) : "dN" (port));
+    uint8_t *sr = (uint8_t *)src;
+    uint8_t *dst = dest;
+
+    while (len != 0)
+    {
+        *dst++ = *sr++;
+        len--;
+    }
+}
+
+inline void memset(void *dest, uint8_t val, uint32_t len)
+{
+    for (uint8_t *dst = (uint8_t *)dest; len != 0; len--)
+    {
+        *dst++ = val;
+    }
+}
+
+inline void bzero(void *dest, uint32_t len)
+{
+    memset(dest, 0, len);
+}
+
+void memclean(char *s, int len)
+{
+    int i;
+    for (i = 0; i != len; i++)
+    {
+        s[i] = 0;
+    }
+    return;
+}
+
+inline int strcmp(const char *dest, const char *src)
+{
+    int ret = 0;
+
+    while (!(ret = *(unsigned char *)src - *(unsigned char *)dest) && *dest)
+    {
+        ++src;
+        ++dest;
+    }
+    if (ret < 0)
+    {
+        ret = -1;
+    }
+    else if (ret > 0)
+    {
+        ret = 1;
+    }
     return ret;
 }
 
-uint16_t inw(uint16_t port)
+inline char *strcpy(char *dest, const char *src)
 {
-    uint16_t ret;
-    asm volatile ("inw %1, %0" : "=a" (ret) : "dN" (port));
-    return ret;
-}
+    char *tmp = dest;
 
-// Copy len bytes from src to dest.
-void memcpy(uint8_t *dest, const uint8_t *src, uint32_t len)
-{
-    const uint8_t *sp = (const uint8_t *)src;
-    uint8_t *dp = (uint8_t *)dest;
-    for(; len != 0; len--) *dp++ = *sp++;
-}
-
-// Write len copies of val into dest.
-void memset(void *dest, uint8_t val, uint32_t len)
-{
-    uint8_t *temp = (uint8_t *)dest;
-    for ( ; len != 0; len--) *temp++ = val;
-}
-
-// Compare two strings. Should return -1 if 
-// str1 < str2, 0 if they are equal or 1 otherwise.
-int strcmp(char *str1, char *str2)
-{
-      int i = 0;
-      int failed = 0;
-      while(str1[i] != '\0' && str2[i] != '\0')
-      {
-          if(str1[i] != str2[i])
-          {
-              failed = 1;
-              break;
-          }
-          i++;
-      }
-      // why did the loop exit?
-      if( (str1[i] == '\0' && str2[i] != '\0') || (str1[i] != '\0' && str2[i] == '\0') )
-          failed = 1;
-  
-      return failed;
-}
-
-// Copy the NULL-terminated string src into dest, and
-// return dest.
-char *strcpy(char *dest, const char *src)
-{
-    do
-    {
-      *dest++ = *src++;
-    }
-    while (*src != 0);
-}
-
-// Concatenate the NULL-terminated string src onto
-// the end of dest, and return dest.
-char *strcat(char *dest, const char *src)
-{
-    while (*dest != 0)
-    {
-        *dest = *dest++;
-    }
-
-    do
+    while (*src)
     {
         *dest++ = *src++;
     }
-    while (*src != 0);
+    *dest = '\0';
+    return tmp;
+}
+
+char *strncpy(char *dest, const char *src, uint32_t len)
+{
+    char *dst = dest;
+
+    while (len > 0)
+    {
+        while (*src)
+        {
+            *dest++ = *src++;
+        }
+        len--;
+    }
+    *dest = '\0';
+    return dst;
+}
+
+inline char *strcat(char *dest, const char *src)
+{
+    char *cp = dest;
+
+    while (*cp)
+    {
+        cp++;
+    }
+    while ((*cp++ = *src++))
+        ;
     return dest;
 }
 
-char *strncpy(char *s1, const char *s2, size_t n)
+char *strchr(char *str, int c)
 {
-	unsigned int extern_iter = 0; //when s2's length is shorter than n, this allows the function to continue padding null characters
+    for (; *str != 0; ++str)
+    {
+        if (*str == c)
+        {
+            return str;
+        }
+    }
+    return 0;
+}
 
-	unsigned int iterator = 0;
-	for (iterator = 0; iterator < n; iterator++) //iterate through s2 up to char n, copying them to s1
-	{
-		if (s2[iterator] != '\0')
-			s1[iterator] = s2[iterator];
-		else //the end of s2 was found prematurely - copy the null character, update external iterator and quit for loop
-		{
-			s1[iterator] = s2[iterator];
-			extern_iter = iterator + 1;
-			break;
-		}
-	}
+char *strchrnul(const char *s, int c)
+{
+    char *p = (char *)s;
+    while (*p && *p != (char)c)
+    {
+        p++;
+    }
+    return p;
+}
 
-	while (extern_iter < n) //while there are still spaces that need to be filled with null characters, fill them
-	{
-		s1[extern_iter] = '\0';
-		extern_iter++;
-	}
+inline int strlen(const char *src)
+{
+    const char *eos = src;
 
-	return s1;
+    while (*eos++)
+        ;
+    return (eos - src - 1);
+}
+
+void delete_char(char *str, int pos)
+{
+    int i;
+    for (i = pos; i < strlen(str); i++)
+    {
+        str[i] = str[i + 1];
+    }
+}
+
+void insert_char(char *str, int pos, char ch)
+{
+    int i;
+    for (i = strlen(str); i >= pos; i--)
+    {
+        str[i + 1] = str[i];
+    }
+    str[pos] = ch;
+}
+
+void insert_str(char *str, char *insert_str, int pos)
+{
+    for (int i = 0; i < strlen(insert_str); i++)
+    {
+        insert_char(str, pos + i, insert_str[i]);
+    }
+}
+
+char *strupr(char *src)
+{
+    while (*src != '\0')
+    {
+        if (*src >= 'a' && *src <= 'z')
+            *src -= 32;
+        src++;
+    }
+    return src;
+}
+
+char *strlwr(char *src)
+{
+    while (*src != '\0')
+    {
+        if (*src > 'A' && *src <= 'Z')
+        {
+            //*src += 0x20;
+            *src += 32;
+        }
+        src++;
+    }
+    return src;
+}
+
+void *strdup(const char *s)
+{
+    size_t len = strlen(s) + 1;
+    void *p = (void *)malloc(len);
+    if (p != 0)
+        memcpy(p, (uint8_t *)s, len);
+    return p;
+}
+
+int strncmp(const char *s1, const char *s2, size_t n)
+{
+    const unsigned char *p1 = (const unsigned char *)s1,
+                        *p2 = (const unsigned char *)s2;
+    while (n-- > 0)
+    {
+        if (*p1 != *p2)
+            return *p1 - *p2;
+        if (*p1 == '\0')
+            return 0;
+        p1++, p2++;
+    }
+    return 0;
+}
+
+int streq(const char *s1, const char *s2)
+{
+    return strcmp(s1, s2) == 0;
 }

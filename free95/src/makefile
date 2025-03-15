@@ -1,5 +1,17 @@
+# Free95
+#
+# NAME:
+#      reshell.c
+#
+# DESCRIPTION
+#      Makefile for Free95 source code
+#
+# Author: Rainy101112
+
 CC = gcc
+LD = ld
 ASM = nasm
+RM = rm
 
 ifeq ($(VERBOSE), 1)
   V=
@@ -12,12 +24,12 @@ endif
 C_SOURCES	:= $(shell find * -name "*.c")
 S_SOURCES	:= $(shell find * -name "*.s")
 OBJS		:= $(C_SOURCES:%.c=%.o) $(S_SOURCES:%.s=%.o)
-DEPS		:= $(OBJS:%.o=%.d)
+DEPS		:= $(OBJS:%.o)
 
 QEMU		:= qemu-system-x86_64
 QEMU_FLAGS	:= -m 128M -machine q35 -serial stdio -audiodev pa,id=speaker -machine pcspk-audiodev=speaker
 
-C_FLAGS		:= -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -g3 -I include
+C_FLAGS		:= -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -ggdb -I include -nostdinc
 LD_FLAGS	:= -static -nostdlib -m elf_i386 -T ../res/linker.ld
 AS_FLAGS	:= -f elf32
 
@@ -31,7 +43,7 @@ all: info Free95.iso
 
 .PHONY: info
 info:
-	@printf "Free95 Compilation\n"
+	@printf "Free95 Compilation. Versoft-Software (C)\n"
 
 NXOSKRNL: $(OBJS)
 	$(V)$(LD) $(LD_FLAGS) -o $@ $^
@@ -61,5 +73,11 @@ clean:
 .PHONY: run
 run: Free95.iso
 	$(QEMU) $(QEMU_FLAGS) -cdrom $<
+
+.PHONY: debug
+debug: Free95.iso
+	$(QEMU) $(QEMU_FLAGS) -cdrom $< -S -s &
+	sleep 1
+	cgdb -x script/gdbinit
 
 -include $(DEPS)

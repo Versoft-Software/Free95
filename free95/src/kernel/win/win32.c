@@ -9,9 +9,23 @@
  *
  * Author: Kap Petrov
  *
-*/
+ */
 
 #include "win32.h"
+#include "common.h"
+#include "pmm.h"
+#include "kb.h"
+
+extern FileNode *getCon();
+extern VOID FillRectangle(UINT32 x, UINT32 y, UINT32 width, UINT32 height, UINT32 color);
+extern VOID KiPutStringC(const CHAR *str, INT x, INT y, UINT color);
+extern VOID KiPutString(const CHAR *str, INT x, INT y);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+#pragma GCC diagnostic ignored "-Wint-conversion"
+#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
 
 void FsWrite(FileNode *file, const char *con)
 {
@@ -48,32 +62,33 @@ char *NtReadFile(HANDLE FileHandle)
     return FsRead(FileHandle);
 }
 
-UINT lenstr(const char *str) {
+UINT lenstr(const char *str)
+{
     const char *s = str; // Pointer to traverse the string
-    while (*s) {         // Continue until null character is found
+    while (*s)
+    { // Continue until null character is found
         s++;
     }
-    return s - str;      // Length is the difference between pointers
+    return s - str; // Length is the difference between pointers
 }
 
 WINBOOL WriteFile(HANDLE hFile, LPCVOID lpBuffer)
 {
     ULONG length = (ULONG)lenstr(lpBuffer);
 
-    asm volatile (
-        "mov %0, %%edi\n"       // Syscall number (176)
-        "mov %1, %%ebx\n"       // File handle
-        "mov %2, %%esi\n"       // Buffer
-        "mov %3, %%edx\n"       // Length
-        "int $0x2E\n"           // Trigger syscall
+    asm volatile(
+        "mov %0, %%edi\n" // Syscall number (176)
+        "mov %1, %%ebx\n" // File handle
+        "mov %2, %%esi\n" // Buffer
+        "mov %3, %%edx\n" // Length
+        "int $0x2E\n"     // Trigger syscall
         :
         : "g"(176), "g"(hFile), "g"((PVOID)lpBuffer), "g"(length)
-        : "edi", "ebx", "esi", "edx"
-    );
+        : "edi", "ebx", "esi", "edx");
     return TRUE;
 }
 
-UINT wcslen(const char* str)
+UINT wcslen(const char *str)
 {
     UINT length = 0;
     while (str[length] != '\0')
@@ -109,7 +124,7 @@ WINBOOL WriteConsole(HANDLE hConsoleOutput, const VOID *lpBuffer, DWORD nNumberO
 
 WINBOOL ReadConsole(HANDLE hConsoleInput, LPVOID lpBuffer, DWORD nNumberOfCharsToRead, LPDWORD lpNumbersOfCharRead, LPVOID pInputControl)
 {
-    const char *buffer =  NtReadFile(hConsoleInput);
+    const char *buffer = NtReadFile(hConsoleInput);
     strcpy(lpBuffer, buffer);
     lpNumbersOfCharRead = nNumberOfCharsToRead;
 
@@ -152,10 +167,10 @@ HWND CreateWindowEx(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, 
 
 WINBOOL ShowWindow(HWND hWnd, int nCmdShow)
 {
-    WINDOW *win = (WINDOW*)hWnd;
+    WINDOW *win = (WINDOW *)hWnd;
     FillRectangle(win->x, win->y, win->w, win->h, win->color);
 
-    FillRectangle(win->x, win->y , win->w, 20, RGB(0, 0, 255));
+    FillRectangle(win->x, win->y, win->w, 20, RGB(0, 0, 255));
 
     KiPutStringC(win->name, win->x, win->y + 2, RGB(255, 255, 255));
     FillRectangle(win->x + (win->w - 20), win->y, 20, 20, 0xFFFF0000);
@@ -227,20 +242,20 @@ WINBOOL MessageBox(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType)
     return TRUE;
 }
 
-
 LRESULT DefWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     return 100;
 }
 
-typedef struct {
+typedef struct
+{
     MSG messages[MAX_MESSAGES];
     int head;
     int tail;
     int size;
 } MessageArray;
 
-MessageArray messageArray = { .head = 0, .tail = 0, .size = 0 };
+MessageArray messageArray = {.head = 0, .tail = 0, .size = 0};
 
 void PostMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, POINT pt)
 {
@@ -249,7 +264,8 @@ void PostMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, POINT pt
         // Well, shit.
         MessageBox(0, "       A fatal error has occured\n       System halted.", "Error", MB_OK);
         HaltKbdDrv();
-        while(1);
+        while (1)
+            ;
         return;
     }
 
@@ -259,8 +275,7 @@ void PostMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, POINT pt
         .wParam = wParam,
         .lParam = lParam,
         .time = 0,
-        .pt = pt
-    };
+        .pt = pt};
 
     messageArray.messages[messageArray.tail] = newMsg;
     messageArray.tail = (messageArray.tail + 1) % MAX_MESSAGES;
@@ -315,6 +330,7 @@ RECT BeginPaint(HANDLE hWnd, PAINTSTRUCT *psStruct)
 WINBOOL SetTextColor(HDC hDc, UINT color)
 {
     uColor = color;
+    return 0;
 }
 
 int SetBkMode(HDC hDc, int mode)
@@ -325,9 +341,11 @@ int SetBkMode(HDC hDc, int mode)
 WINBOOL TextOut(HDC h, int x, int y, LPCSTR lpString, int c)
 {
     RECT *hDc;
-    hDc = (RECT*)(h);
+    hDc = (RECT *)(h);
 
-    KiPutStringC(lpString, hDc->right + x, hDc->bottom + y + 20, uColor);
+    KiPutStringC((uint32_t)lpString, hDc->right + x, hDc->bottom + y + 20, uColor);
+
+    return 0;
 }
 
 HDC EndPaint(HANDLE hWnd, PAINTSTRUCT *psStruct)
@@ -345,3 +363,5 @@ WINBOOL DeleteObject(HBRUSH hBrush)
     hBrush = 0;
     return TRUE;
 }
+
+#pragma GCC diagnostic pop

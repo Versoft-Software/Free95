@@ -9,49 +9,55 @@
  *
  * Author: Kap Petrov
  *
-*/
+ */
 
 #include "reshell.h"
 #include "winuser.h"
+#include "pmm.h"
 
-LRESULT ReshellProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+extern void launch();
+extern HDC BeginPaint(HWND, PAINTSTRUCT *);
+extern void PsKillSystemThread(int);
+
+LRESULT
+ReshellProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     RECT target = {20, 15, 48, 48};
 
     switch (uMsg)
     {
-        case WM_CLOSE:
-            PostQuitMessage(0);
-            return 0;
-        case WM_LBUTTONDOWN:
-            int x = LOWORD(lParam);
-            int y = HIWORD(lParam);
-            POINT pt = {x, y};
-            if (PtInRect(&target, pt))
-            {
-                launch();
-            }
-            return 0;
-        case WM_PAINT:
-            PAINTSTRUCT ps;
-            HANDLE hdc = BeginPaint(hwnd, &ps);
+    case WM_CLOSE:
+        PostQuitMessage(0);
+        return 0;
+    case WM_LBUTTONDOWN:
+        int x = LOWORD(lParam);
+        int y = HIWORD(lParam);
+        POINT pt = {x, y};
+        if (PtInRect(&target, pt))
+        {
+            launch();
+        }
+        return 0;
+    case WM_PAINT:
+        PAINTSTRUCT ps;
+        HANDLE hdc = BeginPaint(hwnd, &ps);
 
-            SetTextColor(hdc, RGB(0, 0, 0));
-            SetBkMode(hdc, TRANSPARENT);
-            TextOut(hdc, 8, 58, "Freever", 6);
+        SetTextColor(hdc, RGB(0, 0, 0));
+        SetBkMode(hdc, TRANSPARENT);
+        TextOut(hdc, 8, 58, "Freever", 6);
 
-            RECT rect = {20, 15, 48, 48};
+        RECT rect = {20, 15, 48, 48};
 
-            HBRUSH hBrush = CreateSolidBrush(RGB(0, 128, 255));
+        HBRUSH hBrush = CreateSolidBrush(RGB(0, 128, 255));
 
-            FillRect(hdc, &rect, hBrush);
+        FillRect(&rect);
 
-            DeleteObject(hBrush);
+        DeleteObject(hBrush);
 
-            EndPaint(hwnd, &ps);
-            return 0;
-        default:
-            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        EndPaint(hwnd, &ps);
+        return 0;
+    default:
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -65,7 +71,7 @@ void ReshellMain()
     wc.lpfnWndProc = ReshellProc;
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
-    if(!RegisterClass(&wc))
+    if (!RegisterClass(&wc))
     {
         MessageBox(0, "FAILED TO CREATE WINDOW!", "ERROR", MB_OK);
         return;

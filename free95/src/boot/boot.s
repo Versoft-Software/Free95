@@ -3,7 +3,7 @@ MEMINFO     equ  1<<0
 BOOTDEVICE  equ  1<<1
 CMDLINE     equ  1<<2
 MODULECOUNT equ  1<<3
-SYMT        equ  48 ; bits 4 & 5
+SYMT        equ  48   ; bits 4 & 5
 MEMMAP      equ  1<<6
 DRIVE       equ  1<<7
 CONFIGT     equ  1<<8
@@ -16,7 +16,6 @@ MAGIC_HEADER       equ  0x1BADB002
 CHECKSUM    equ -(MAGIC_HEADER + FLAGS)
 
 BOOTLOADER_MAGIC  equ  0x2BADB002
-
 
 ; set multiboot section
 section .multiboot
@@ -42,7 +41,6 @@ section .text
     global _start
     global MAGIC_HEADER
     global BOOTLOADER_MAGIC
-
 
 ; define _start, aligned by linker.ld script
 _start:

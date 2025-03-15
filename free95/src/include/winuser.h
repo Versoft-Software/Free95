@@ -3,7 +3,9 @@
 
 #include "win32.h"
 
-WINBOOL FillRect(HDC hDc, RECT *r, HBRUSH hBrush)
+extern VOID FillRectangle(UINT32 x, UINT32 y, UINT32 width, UINT32 height, UINT32 color);
+
+WINBOOL FillRect(RECT *r)
 {
     RECT rObject;
     rObject = *r;
@@ -14,10 +16,10 @@ WINBOOL FillRect(HDC hDc, RECT *r, HBRUSH hBrush)
 
 WINBOOL PtInRect(const RECT *rect, POINT pt)
 {
-    return (pt.x >= rect->left &&
-            pt.x <= rect->right &&
-            pt.y >= rect->top + 20 &&
-            pt.y <= rect->bottom);
+    return ((UINT)pt.x >= rect->left &&
+            (UINT)pt.x <= rect->right &&
+            (UINT)pt.y >= rect->top + 20 &&
+            (UINT)pt.y <= rect->bottom);
 }
 
 #endif

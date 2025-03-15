@@ -1,6 +1,7 @@
 #include "kheap.h"
 #include "vga.h"
 #include "pmm.h"
+#include "string.h"
 
 // Heap metadata
 void *g_kheap_start_addr = NULL, *g_kheap_end_addr = NULL;
@@ -11,8 +12,10 @@ KHEAP_BLOCK *g_head = NULL;
 /**
  * Initialize heap with start and end addresses.
  */
-int kheap_init(void *start_addr, void *end_addr) {
-    if (start_addr >= end_addr) {
+int kheap_init(void *start_addr, void *end_addr)
+{
+    if (start_addr >= end_addr)
+    {
         print("Failed to init kheap\n");
         return -1;
     }
@@ -27,10 +30,11 @@ int kheap_init(void *start_addr, void *end_addr) {
 /**
  * Increases heap memory by requested size and returns its address.
  */
-void *kbrk(int size) {
+void *kbrk(int size)
+{
     if (size <= 0 || g_total_used_size + size > g_total_size)
         return NULL;
-    
+
     void *addr = g_kheap_start_addr + g_total_used_size;
     g_total_used_size += size;
     return addr;
@@ -39,10 +43,13 @@ void *kbrk(int size) {
 /**
  * Returns the largest free memory block (Worst Fit Algorithm).
  */
-KHEAP_BLOCK *worst_fit(int size) {
+KHEAP_BLOCK *worst_fit(int size)
+{
     KHEAP_BLOCK *best = NULL, *temp = g_head;
-    while (temp) {
-        if (temp->metadata.is_free && temp->metadata.size >= size) {
+    while (temp)
+    {
+        if (temp->metadata.is_free && temp->metadata.size >= (uint32_t)size)
+        {
             if (!best || temp->metadata.size > best->metadata.size)
                 best = temp;
         }
@@ -54,20 +61,26 @@ KHEAP_BLOCK *worst_fit(int size) {
 /**
  * Allocates a new heap block at the end of the heap.
  */
-KHEAP_BLOCK *allocate_new_block(int size) {
+KHEAP_BLOCK *allocate_new_block(int size)
+{
     KHEAP_BLOCK *new_block = (KHEAP_BLOCK *)kbrk(sizeof(KHEAP_BLOCK));
-    if (!new_block) return NULL;
-    
+    if (!new_block)
+        return NULL;
+
     new_block->metadata.is_free = false;
     new_block->metadata.size = size;
     new_block->data = kbrk(size);
     new_block->next = NULL;
 
-    if (!g_head) {
+    if (!g_head)
+    {
         g_head = new_block;
-    } else {
+    }
+    else
+    {
         KHEAP_BLOCK *temp = g_head;
-        while (temp->next) temp = temp->next;
+        while (temp->next)
+            temp = temp->next;
         temp->next = new_block;
     }
 
@@ -77,11 +90,14 @@ KHEAP_BLOCK *allocate_new_block(int size) {
 /**
  * Allocates memory. Uses worst-fit if possible; otherwise, expands heap.
  */
-void *kmalloc(int size) {
-    if (size <= 0) return NULL;
+void *kmalloc(int size)
+{
+    if (size <= 0)
+        return NULL;
 
     KHEAP_BLOCK *block = worst_fit(size);
-    if (block) {
+    if (block)
+    {
         block->metadata.is_free = false;
         return block->data;
     }
@@ -93,27 +109,36 @@ void *kmalloc(int size) {
 /**
  * Allocates and zeroes out memory.
  */
-void *kcalloc(int n, int size) {
-    if (n <= 0 || size <= 0) return NULL;
+void *kcalloc(int n, int size)
+{
+    if (n <= 0 || size <= 0)
+        return NULL;
     void *mem = kmalloc(n * size);
-    if (mem) memset(mem, 0, n * size);
+    if (mem)
+        memset(mem, 0, n * size);
     return mem;
 }
 
 /**
  * Resizes a previously allocated block.
  */
-void *krealloc(void *ptr, int size) {
-    if (!ptr) return kmalloc(size);
-    if (size <= 0) return NULL;
+void *krealloc(void *ptr, int size)
+{
+    if (!ptr)
+        return kmalloc(size);
+    if (size <= 0)
+        return NULL;
 
     KHEAP_BLOCK *temp = g_head;
-    while (temp) {
-        if (temp->data == ptr) {
+    while (temp)
+    {
+        if (temp->data == ptr)
+        {
             KHEAP_BLOCK *new_block = allocate_new_block(size);
-            if (!new_block) return NULL;
+            if (!new_block)
+                return NULL;
 
-            int copy_size = (temp->metadata.size > size) ? size : temp->metadata.size;
+            int copy_size = (temp->metadata.size > (uint32_t)size) ? (uint32_t)size : temp->metadata.size;
             memcpy(new_block->data, ptr, copy_size);
 
             temp->metadata.is_free = true;
@@ -127,10 +152,13 @@ void *krealloc(void *ptr, int size) {
 /**
  * Frees a previously allocated block.
  */
-void kfree(void *addr) {
+void kfree(void *addr)
+{
     KHEAP_BLOCK *temp = g_head;
-    while (temp) {
-        if (temp->data == addr) {
+    while (temp)
+    {
+        if (temp->data == addr)
+        {
             temp->metadata.is_free = true;
             return;
         }
@@ -141,8 +169,8 @@ void kfree(void *addr) {
 /**
  * Prints all allocated heap blocks (debugging).
  */
-void kheap_print_blocks() {
-    KHEAP_BLOCK *temp = g_head;
+void kheap_print_blocks()
+{
     print("Block Size: ");
     printInt(sizeof(KHEAP_BLOCK));
     print("\n");

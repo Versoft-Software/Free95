@@ -90,7 +90,7 @@ typedef CONST CHAR *LPCCH;
 typedef CHAR *LPCH;
 typedef COLORREF *LPCOLORREF;
 typedef const char *LPCSTR;
-typedef char* PCSZ;
+typedef char *PCSZ;
 
 #ifdef UNICODE
 typedef const unsigned short *LPCTSTR;
@@ -174,7 +174,7 @@ typedef REGSAM;
 typedef short RETCODE;
 
 typedef HANDLE SC_HANDLE;
-typedef LPVOID  SC_LOCK;
+typedef LPVOID SC_LOCK;
 typedef SC_HANDLE *LPSC_HANDLE;
 typedef DWORD SERVICE_STATUS_HANDLE;
 /* typedef SPHANDLE; */

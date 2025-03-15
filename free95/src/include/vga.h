@@ -1,7 +1,26 @@
+/*
+ * Free 95
+ *
+ * NAME:
+ *		vga.h
+ *
+ * DESCRIPTION:
+ *		VGA driver.
+ *
+ * Author: Rainy101112 ...
+ *
+ */
+
 #ifndef VGA_H
 #define VGA_H
 
-enum vga_color {
+#include "stddef.h"
+#include "stdint.h"
+#include "bga.h"
+#include "pmm.h"
+
+enum vga_color
+{
     VGA_COLOR_BLACK = 0,
     VGA_COLOR_BLUE = 1,
     VGA_COLOR_GREEN = 2,
@@ -20,12 +39,14 @@ enum vga_color {
     VGA_COLOR_WHITE = 15,
 };
 
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) 
+static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
     return fg | bg << 4;
 }
 
+void setPosition(size_t col, size_t row);
 void terminal_initialize(void);
-void print(const char* data);
+void terminal_initialize_a(uint8_t color);
+void print(const char *data);
 void printInt(const int data);
 #endif

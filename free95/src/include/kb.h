@@ -1,6 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 #include <stddef.h>
+#include <stdbool.h>
 // Utility keys
 #define CTRL 0x1D
 #define CTRLR 0x9D
@@ -33,8 +34,15 @@
 
 #define MAX_INPUT_LENGTH 256
 
+int isClicked();
+void setClicked(int n);
+void HaltKbdDrv();
+char getLast();
+char *getInp();
+char *getInpA();
+bool getReady();
 void keyboardHandler();
 char getLast();
 void init_keyboard();
-void scanf(char* buffer, int maxLength);
+void scanf(char *buffer, int maxLength);
 #endif

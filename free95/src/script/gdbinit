@@ -1,0 +1,4 @@
+file NXOSKRNL
+target remote : 1234
+break kernelMain
+c

@@ -9,29 +9,34 @@
  *
  * Author: Kap Petrov
  *
-*/
+ */
 
 #include "freever.h"
+#include "pmm.h"
+
+extern VOID FillRectangle(UINT32 x, UINT32 y, UINT32 width, UINT32 height, UINT32 color);
+extern HDC BeginPaint(HWND, PAINTSTRUCT *);
+extern void PsKillSystemThread(int);
 
 LRESULT VerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-        case WM_CLOSE:
-            PostQuitMessage(0);
-            return 0;
-        case WM_PAINT:
-            PAINTSTRUCT ps;
-            HANDLE hdc = BeginPaint(hwnd, &ps);
+    case WM_CLOSE:
+        PostQuitMessage(0);
+        return 0;
+    case WM_PAINT:
+        PAINTSTRUCT ps;
+        HANDLE hdc = BeginPaint(hwnd, &ps);
 
-            SetTextColor(hdc, RGB(0, 0, 0));
-            SetBkMode(hdc, TRANSPARENT);
-            TextOut(hdc, 10, 10, "Versoft Free95\nVersion 0.2.0\n\nAlpha testing version\n", 6);
+        SetTextColor(hdc, RGB(0, 0, 0));
+        SetBkMode(hdc, TRANSPARENT);
+        TextOut(hdc, 10, 10, "Versoft Free95\nVersion 0.2.0\n\nAlpha testing version\n", 6);
 
-            EndPaint(hwnd, &ps);
-            return 0;
-        default:
-            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        EndPaint(hwnd, &ps);
+        return 0;
+    default:
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -45,7 +50,7 @@ void VerMain()
     wc.lpfnWndProc = VerProc;
     wc.hbrBackground = (HBRUSH)(RGB(127, 127, 127));
 
-    if(!RegisterClass(&wc))
+    if (!RegisterClass(&wc))
     {
         MessageBox(0, "FAILED TO CREATE WINDOW!", "ERROR", MB_OK);
         return;

@@ -15,16 +15,16 @@ typedef uint32 PMM_PHYSICAL_ADDRESS;
     Make sure you pass memory to qemu using -m option
     or i will personally come and strangle you.
 */
-#define PMM_BLOCK_SIZE    4096
+#define PMM_BLOCK_SIZE 4096
 
-typedef struct {
+typedef struct
+{
     uint32 memory_size;
     uint32 max_blocks;
     uint32 *memory_map_array;
     uint32 memory_map_end;
     uint32 used_blocks;
 } PMM_INFO;
-
 
 uint32 pmm_get_max_blocks();
 uint32 pmm_get_used_blocks();
@@ -52,21 +52,25 @@ void pmm_deinit_region(PMM_PHYSICAL_ADDRESS base, uint32 region_size);
 /**
  * request to allocate a single block of memory from pmm
  */
-void* pmm_alloc_block();
+void *pmm_alloc_block();
 
 /**
  * free given requested single block of memory from pmm
  */
-void pmm_free_block(void* p);
+void pmm_free_block(void *p);
 
 /**
  * request to allocate no of blocks of memory from pmm
  */
-void* pmm_alloc_blocks(uint32 size);
+void *pmm_alloc_blocks(uint32 size);
 
 /**
  * free given requested no of blocks of memory from pmm
  */
-void pmm_free_blocks(void* p, uint32 size);
+void pmm_free_blocks(void *p, uint32 size);
+
+void *malloc(uint32 size);
+
+void free(void *ptr, uint32 size);
 
 #endif

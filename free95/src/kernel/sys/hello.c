@@ -9,9 +9,18 @@
  *
  * Author: Kap Petrov
  *
-*/
+ */
 
 #include "hello.h"
+#include "win32.h"
+#include "pmm.h"
+#include "base.h"
+#include "stdint.h"
+#include "stddef.h"
+
+extern HDC BeginPaint(HWND, PAINTSTRUCT *);
+extern void PsKillSystemThread(int);
+extern VOID FillRectangle(UINT32 x, UINT32 y, UINT32 width, UINT32 height, UINT32 color);
 
 int once = 0;
 
@@ -19,21 +28,21 @@ LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-        case WM_CLOSE:
-            PostQuitMessage(0);
-            return 0;
-        case WM_PAINT:
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
+    case WM_CLOSE:
+        PostQuitMessage(0);
+        return 0;
+    case WM_PAINT:
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
 
-            SetTextColor(hdc, RGB(0, 0, 255));
-            SetBkMode(hdc, TRANSPARENT);
-            TextOut(hdc, 10, 10, "Welcome to Free95!\nPress F3 for a tutorial on\nhow to use Free95", 13);
+        SetTextColor(hdc, RGB(0, 0, 255));
+        SetBkMode(hdc, TRANSPARENT);
+        TextOut(hdc, 10, 10, "Welcome to Free95!\nPress F3 for a tutorial on\nhow to use Free95", 13);
 
-            EndPaint(hwnd, &ps);
-            return 0;
-        default:
-            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        EndPaint(hwnd, &ps);
+        return 0;
+    default:
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -47,7 +56,7 @@ void WinMain()
     wc.lpfnWndProc = WindowProc;
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
-    if(!RegisterClass(&wc))
+    if (!RegisterClass(&wc))
     {
         MessageBox(0, "FAILED TO CREATE WINDOW!", "ERROR", MB_OK);
         return;
