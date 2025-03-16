@@ -24,7 +24,7 @@ SOURCES := $(wildcard $(SRC)/**.c)
 ASMSRC  := $(wildcard $(SRC)/**.s)
 ASMOBJ  := $(patsubst $(SRC)/%.s,$(OBJ)/%.s.o,$(ASMSRC))
 COBJ    := $(patsubst $(SRC)/%.c,$(OBJ)/%.c.o,$(SOURCES))
-CFLAGS= -m32 -std=gnu99 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -Wno-error -Wno-implicit-function-declaration -Wno-int-conversion
+CFLAGS= -m32 -std=gnu99 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -Wno-error -Wno-implicit-function-declaration -Wno-int-conversion -fno-stack-protector
 ASFLAGS=-felf32
 
 all: $(COBJ) $(ASMOBJ) link 
