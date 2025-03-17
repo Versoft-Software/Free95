@@ -21,7 +21,7 @@ body:
     id: vuln-description
     attributes:
       label: Vulnerability Description
-      description: Provide a detailed description of the security vulnerability, including steps to reproduce.
+      description: Provide a detailed description of the security vulnerability.
       placeholder: Describe the vulnerability in detail.
     validations:
       required: true

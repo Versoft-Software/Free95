@@ -1,0 +1,62 @@
+name: Free95 Bug Report
+description: Report a bug in Free95.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug in Free95, please ensure you are on the latest version of Free95.
+  - type: textarea
+    id: Bug Description
+    attributes:
+      label: Bug Description
+      description: Provide a detailed description of the bug.
+      placeholder: Describe the bug in detail.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Assess the severity of this vulnerability.
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+      default: 2
+    validations:
+      required: true
+  - type: textarea
+    id: steps-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Detail the steps to reproduce the bug.
+      placeholder: "Step 1: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: patch-or-suggested-fix
+    attributes:
+      label: Patch/Suggested Fix
+      description: If you have a proposed solution or patch, please provide details here.
+      placeholder: "Suggested fix: ..."
+    validations:
+      required: false
+  - type: checkboxes
+    id: Security-Policy
+    attributes:
+      label: Security Policy
+      description: By submitting this bug report, you agree to follow Free95's security policy.
+      options:
+        - label: I agree to follow Free95's Security Policy
+          required: true
+  - type: checkboxes
+    id: latest-version
+    attributes:
+      label: Are you on the latest version?
+      options:
+        - label: I am on the latest version of Free95
+          required: true
+
