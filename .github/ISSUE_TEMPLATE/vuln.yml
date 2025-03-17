@@ -21,7 +21,7 @@ body:
     id: vuln-description
     attributes:
       label: Vulnerability Description
-      description: Provide a detailed description of the security vulnerability, including steps to reproduce if possible.
+      description: Provide a detailed description of the security vulnerability, including steps to reproduce.
       placeholder: Describe the vulnerability in detail.
       value: "A security vulnerability has been identified in Free95."
     validations:
@@ -43,7 +43,7 @@ body:
     id: steps-reproduce
     attributes:
       label: Steps to Reproduce
-      description: Detail the steps to reproduce the vulnerability, if applicable.
+      description: Detail the steps to reproduce the vulnerability.
       placeholder: "Step 1: ..."
     validations:
       required: true
@@ -63,9 +63,6 @@ body:
       multiple: true
       options:
         - Kernel
-        - User Space
-        - Networking
-        - Filesystem
         - Win32 API
         - Other
     validations:
@@ -81,7 +78,7 @@ body:
   - type: checkboxes
     id: responsible-disclosure
     attributes:
-      label: Responsible Disclosure
+      label: Security Policy
       description: By submitting this vulnerability report, you agree to follow Free95's security policy.
       options:
         - label: I agree to follow Free95's Security Policy
