@@ -20,4 +20,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: ISO
-        path: free95/src/iso/
+        path: free95/src/Free95.iso
