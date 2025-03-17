@@ -23,7 +23,6 @@ body:
       label: Vulnerability Description
       description: Provide a detailed description of the security vulnerability, including steps to reproduce.
       placeholder: Describe the vulnerability in detail.
-      value: "A security vulnerability has been identified in Free95."
     validations:
       required: true
   - type: dropdown
