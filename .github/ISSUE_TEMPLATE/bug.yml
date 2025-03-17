@@ -8,7 +8,7 @@ body:
       value: |
         Thank you for reporting a bug in Free95, please ensure you are on the latest version of Free95.
   - type: textarea
-    id: Bug Description
+    id: Bug-Description
     attributes:
       label: Bug Description
       description: Provide a detailed description of the bug.
