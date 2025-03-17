@@ -1,0 +1,89 @@
+name: Free95 Security Vulnerability Report
+description: Report a security vulnerability in Free95.
+title: "[Vuln]: "
+labels: ["security", "vulnerability", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a security vulnerability in Free95.
+        Your contribution helps enhance the security and reliability of Free95.
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we reach you for further information or clarification?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: vuln-description
+    attributes:
+      label: Vulnerability Description
+      description: Provide a detailed description of the security vulnerability, including steps to reproduce if possible.
+      placeholder: Describe the vulnerability in detail.
+      value: "A security vulnerability has been identified in Free95."
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Assess the severity of this vulnerability.
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+      default: Medium
+    validations:
+      required: true
+  - type: textarea
+    id: steps-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Detail the steps to reproduce the vulnerability, if applicable.
+      placeholder: "Step 1: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: potential-impact
+    attributes:
+      label: Potential Impact
+      description: Describe the potential consequences if this vulnerability is exploited.
+      placeholder: "Exploiting this vulnerability could lead to..."
+    validations:
+      required: true
+  - type: dropdown
+    id: affected-components
+    attributes:
+      label: Affected Components
+      description: Identify which parts of Free95 are affected by this vulnerability.
+      multiple: true
+      options:
+        - Kernel
+        - User Space
+        - Networking
+        - Filesystem
+        - Win32 API
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: patch-or-suggested-fix
+    attributes:
+      label: Patch/Suggested Fix
+      description: If you have a proposed solution or patch, please provide details here.
+      placeholder: "Suggested fix: ..."
+    validations:
+      required: false
+  - type: checkboxes
+    id: responsible-disclosure
+    attributes:
+      label: Responsible Disclosure
+      description: By submitting this vulnerability report, you agree to follow Free95's security policy.
+      options:
+        - label: I agree to follow Free95's Security Policy
+          required: true
+
