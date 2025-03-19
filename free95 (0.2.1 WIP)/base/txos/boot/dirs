@@ -1,0 +1,1 @@
+This directory is for all boot-related sources like the bootloader for example, it includes the bootloader for all file systems like FAT, EXT, etc.
