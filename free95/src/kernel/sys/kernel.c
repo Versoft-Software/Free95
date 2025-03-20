@@ -565,7 +565,7 @@ void kernelMain(unsigned long magic, unsigned long addr)
     mouse_initialize();
 
     terminal_initialize_a(vga_entry_color(VGA_COLOR_BLACK, VGA_COLOR_DARK_GREY));
-    print("Free95 [Version 0.2.0]\n\n");
+    print("Free95 [Version 0.2.9]\n\n");
 
     mboot_info = (MULTIBOOT_INFO *)addr;
     memset(&g_kmap, 0, sizeof(KERNEL_MEMORY_MAP));
