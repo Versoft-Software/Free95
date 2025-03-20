@@ -31,7 +31,7 @@ LRESULT VerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         SetTextColor(hdc, RGB(0, 0, 0));
         SetBkMode(hdc, TRANSPARENT);
-        TextOut(hdc, 10, 10, "Versoft Free95\nVersion 0.2.0\n\nAlpha testing version\n", 6);
+        TextOut(hdc, 10, 10, "Versoft Free95\nVersion 0.2.9\n\nAlpha testing version\n", 6);
 
         EndPaint(hwnd, &ps);
         return 0;
