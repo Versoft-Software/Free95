@@ -31,7 +31,7 @@
 #include "vga.h"
 #include "bga.h"
 #include "timer.h"
-
+#include "cpu.h"
 extern const unsigned char font_8x16[];
 
 VOID PutPixel(UINT32 x, UINT32 y, UINT32 color)
@@ -566,7 +566,9 @@ void kernelMain(unsigned long magic, unsigned long addr)
 
     terminal_initialize_a(vga_entry_color(VGA_COLOR_BLACK, VGA_COLOR_DARK_GREY));
     print("Free95 [Version 0.2.9]\n\n");
-
+    print("Hardware:\nCPU: ");
+    get_cpu_info();
+    KiWait(5000000);
     mboot_info = (MULTIBOOT_INFO *)addr;
     memset(&g_kmap, 0, sizeof(KERNEL_MEMORY_MAP));
     if (get_kernel_memory_map(&g_kmap, mboot_info) < 0)
