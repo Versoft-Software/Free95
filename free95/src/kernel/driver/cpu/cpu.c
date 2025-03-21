@@ -1,8 +1,8 @@
 #include "cpu.h"
 #include "vga.h"
-#include <string.h>
+#include "string.h"
 #include "stdint.h"
-// Display the CPU model information
+
 
 // Function to get CPU information
 void get_cpu_info() {
@@ -43,6 +43,6 @@ void get_cpu_info() {
     memcpy(cpu_brand + 44, &edx, 4);
 
     cpu_brand[48] = '\0';
-    print(cpu_brand);
+    print(cpu_brand); // Display the CPU model information
 }
 
