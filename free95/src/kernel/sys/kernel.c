@@ -568,7 +568,7 @@ void kernelMain(unsigned long magic, unsigned long addr)
     print("Free95 [Version 0.2.9]\n\n");
     print("Hardware:\nCPU: ");
     get_cpu_info();
-  
+     KiWait(400);
     mboot_info = (MULTIBOOT_INFO *)addr;
     memset(&g_kmap, 0, sizeof(KERNEL_MEMORY_MAP));
     if (get_kernel_memory_map(&g_kmap, mboot_info) < 0)
