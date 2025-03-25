@@ -13,7 +13,15 @@ Free95 is an open-source windows-compatible operating system.
 https://versoft-software.github.io
 
 # What?
-Free95 is your friendly Windows Environment with an added trust of the open source community, all your favorite games, applications and such from Windows will run perfectly fine on Free95 aswell! It is **NOT** a recreation of the NT Kernel, it simply supports apps using the Win32 API (like .exe files)
+Free95 is your friendly Windows Environment with an added trust of the open source community, all your favorite games, applications and such from Windows will run perfectly fine on Free95 aswell!
+
+# What it is NOT
+It is **NOT** a recreation of the NT Kernel, it's a kernel of it's own, exposing a NT Executive like interface to applications to run them. For example:
+
+- Implementing NT System Calls
+- Implementing essential system DLLs like kernel32, user32, and ntdll.
+
+It is also **NOT** a recreation of Windows 95 or the 9x series. It implements the NT Executive of NT 4.0, which is the NT version of Windows 95. Do not expect running Windows 95 applications directly unless it was meant to do so on NT 4.
 
 # Why?
 To remove Windows's bloat, and security problems. Being controlled by a large corporation is unsettling.
