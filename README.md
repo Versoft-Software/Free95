@@ -1,7 +1,10 @@
 # Free95
 Free95 is an open-source windows-compatible operating system.
 
-# Screenshots (0.2.1 WIP)
+# WARNING
+This version will be out of support soon, please do not contribute nor use this version.
+
+# Screenshots
 ## Program Manager
 ![image](https://github.com/user-attachments/assets/2176de6d-0ec1-4c9d-a124-7ce8a9b8f60a)
 ## Freever
