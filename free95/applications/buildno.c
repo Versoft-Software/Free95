@@ -17,8 +17,8 @@ If you do not agree to the terms, do not use the code.
 
 void _start()
 {
-    unsigned int nBuild = 5396;
-    unsigned int nBeta = 2;
+    unsigned int nBuild = 5413;
+    unsigned int nBeta = 3;
     unsigned int nMajorVersion = 0;
     unsigned int nMiddleVersion = 3;
     unsigned int nMinorVersion = 0;
