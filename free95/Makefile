@@ -8,7 +8,8 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
 	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
 	sudo mount -t vfat ./bin/os.bin /mnt/d
-
+	./buildexe.sh
+	./builddll.sh
 	sudo cp ./boot.ini /mnt/d
 	sudo cp ./font.psf /mnt/d
 	sudo cp ./open.exe /mnt/d
