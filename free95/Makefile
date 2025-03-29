@@ -1,30 +1,33 @@
 FILES = ./build/kernel.asm.o ./build/kernel.o ./build/loader.o ./build/user.asm.o ./build/graphics.o ./build/disk/disk.o ./build/bug.o ./build/disk/streamer.o ./build/task/process.o ./build/task/task.o ./build/task/tss.asm.o ./build/fs/pparser.o ./build/fs/file.o ./build/fs/fat/fat16.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/gdt/gdt.o ./build/gdt/gdt.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/string/string.o
 INCLUDES = -I./base/txos
-FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-unused-variable -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
-
+FLAGS = -v -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-unused-variable -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -B/usr/local/bin/i686-elf-
 all: ./bin/boot.bin ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	dd if=./bin/boot.bin >> ./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
 	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
-	sudo mount -t vfat ./bin/os.bin /mnt/d
-
-	sudo cp ./boot.ini /mnt/d
-	sudo cp ./font.psf /mnt/d
-	sudo cp ./open.exe /mnt/d
-	sudo cp ./hello.exe /mnt/d
-	sudo cp ./stop.exe /mnt/d
-	sudo cp ./freever.exe /mnt/d
-	sudo cp ./lsbin.exe /mnt/d
-	sudo cp ./reboot.exe /mnt/d
-	sudo cp ./test.bat /mnt/d
-	sudo cp ./bsod.exe /mnt/d
-	sudo umount /mnt/d
+	# Copy files to the OS image
+	sudo mkdir /mnt/z
+	sudo mount -t vfat ./bin/os.bin /mnt/z
+	sudo cp ./boot.ini /mnt/z
+	sudo cp ./font.psf /mnt/z
+	sudo cp ./open.exe /mnt/z
+	sudo cp ./hello.exe /mnt/z
+	sudo cp ./stop.exe /mnt/z
+	sudo cp ./freever.exe /mnt/z
+	sudo cp ./reboot.exe /mnt/z
+	sudo cp ./test.bat /mnt/z
+	sudo cp ./bsod.exe /mnt/z
+	sudo cp ./blorp.exe /mnt/z
+	sudo cp ./lsbin.exe /mnt/z
+	sudo umount /mnt/z
+	sudo rm -rf /mnt/z
 ./bin/kernel.bin: $(FILES)
 	i686-elf-ld -g -relocatable $(FILES) -o ./build/kernelfull.o
 	i686-elf-gcc $(FLAGS) -T ./base/txos/init/linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/kernelfull.o
 
 ./bin/boot.bin: ./base/txos/boot/fat/x86fboot.asm
+	mkdir -p ./bin
 	nasm -f bin ./base/txos/boot/fat/x86fboot.asm -o ./bin/boot.bin
 
 ./build/kernel.asm.o: ./base/txos/init/kernel.asm
@@ -119,5 +122,5 @@ clean:
 	rm -rf ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	rm -rf ./build
-	rm *.exe
-	rm *.dll
+	rm -rf *.exe
+	rm -rf *.dll
