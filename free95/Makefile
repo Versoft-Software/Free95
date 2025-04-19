@@ -7,22 +7,23 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
 	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
 	# Copy files to the OS image
-	sudo mkdir /mnt/z
-	sudo mount -t vfat ./bin/os.bin /mnt/z
-	sudo cp ./boot.ini /mnt/z
-	sudo cp ./font.psf /mnt/z
-	sudo cp ./open.exe /mnt/z
-	sudo cp ./hello.exe /mnt/z
-	sudo cp ./stop.exe /mnt/z
-	sudo cp ./freever.exe /mnt/z
-	sudo cp ./reboot.exe /mnt/z
-	sudo cp ./test.bat /mnt/z
-	sudo cp ./bsod.exe /mnt/z
-	sudo cp ./lsbin.exe /mnt/z
-	sudo umount /mnt/z
-	sudo rm -rf /mnt/z
+	         sudo mkdir /mnt/z
+	         sudo mount -t vfat ./bin/os.bin /mnt/z
+	         sudo cp ./boot.ini /mnt/z
+	         sudo cp ./font.psf /mnt/z
+	         sudo cp ./open.exe /mnt/z
+	         sudo cp ./hello.exe /mnt/z
+	         sudo cp ./stop.exe /mnt/z
+	         sudo cp ./freever.exe /mnt/z
+	         sudo cp ./reboot.exe /mnt/z
+	         sudo cp ./test.bat /mnt/z
+	         sudo cp ./bsod.exe /mnt/z
+	        sudo cp ./lsbin.exe /mnt/z
+	        sudo umount /mnt/z
+         sudo rm -rf /mnt/z
+	
 ./bin/kernel.bin: $(FILES)
-	i686-elf-ld -g -relocatable $(FILES) -o ./build/kernelfull.o
+	i686-elf-ld --oformat elf_i386 -g -relocatable $(FILES) -o ./build/kernelfull.o
 	i686-elf-gcc $(FLAGS) -T ./base/txos/init/linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/kernelfull.o
 
 ./bin/boot.bin: ./base/txos/boot/fat/x86fboot.asm
@@ -71,7 +72,7 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	i686-elf-gcc $(INCLUDES) -I./base/txos/ke/task $(FLAGS) -std=gnu99 -c ./base/txos/ke/task/process.c -o ./build/task/process.o
 
 ./build/task/task.o: ./base/txos/ke/task/task.c
-	i686-elf-gcc $(INCLUDES) -I./base/txos/ke/task $(FLAGS) -std=gnu99 -c ./base/txos/ke/task/task.c -o ./build/task/task.o
+	i686-elf-i686-elf-gcc $(INCLUDES) -I./base/txos/ke/task $(FLAGS) -std=gnu99 -c ./base/txos/ke/task/task.c -o ./build/task/task.o
 
 ./build/task/tss.asm.o: ./base/txos/ke/task/tss.asm
 	nasm -f elf -g ./base/txos/ke/task/tss.asm -o ./build/task/tss.asm.o
@@ -92,7 +93,7 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	i686-elf-gcc $(INCLUDES) -I./base/txos/ke/memory/paging $(FLAGS) -std=gnu99 -c ./base/txos/ke/memory/paging/paging.c -o ./build/memory/paging/paging.o
 
 ./build/memory/paging/paging.asm.o: ./base/txos/ke/memory/paging/paging.asm
-	nasm -f elf -g ./base/txos/ke/memory/paging/paging.asm -o ./build/memory/paging/paging.asm.o
+	nasm -felf32 -g ./base/txos/ke/memory/paging/paging.asm -o ./build/memory/paging/paging.asm.o
 
 ./build/disk/disk.o: ./base/txos/ke/disk/disk.c
 	mkdir -p ./build/disk
@@ -110,11 +111,11 @@ all: ./bin/boot.bin ./bin/kernel.bin
 
 ./build/fs/pparser.o: ./base/txos/ke/fs/pparser.c
 	mkdir -p ./build/fs
-	i686-elf-gcc $(INCLUDES) -I./base/txos/ke/fs $(FLAGS) -std=gnu99 -c ./base/txos/ke/fs/pparser.c -o ./build/fs/pparser.o
+	i686-elf-gcc $(INCLUDES)  -I./base/txos/ke/fs $(FLAGS) -std=gnu99 -c ./base/txos/ke/fs/pparser.c -o ./build/fs/pparser.o
 
 ./build/string/string.o: ./base/txos/ke/string/string.c
 	mkdir -p ./build/string
-	i686-elf-gcc $(INCLUDES) -I./base/txos/ke/string $(FLAGS) -std=gnu99 -c ./base/txos/ke/string/string.c -o ./build/string/string.o
+	clang $(INCLUDES)  -I./base/txos/ke/string $(FLAGS) -std=gnu99 -c ./base/txos/ke/string/string.c -o ./build/string/string.o
 
 clean:
 	rm -rf ./bin/boot.bin
